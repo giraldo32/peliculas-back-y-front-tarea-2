@@ -3,7 +3,7 @@ const router = express.Router();
 const peliculaController = require('../controllers/peliculaController');
 
 // Crear película
-router.post('/', peliculaController.createPelicula);
+router.post('/', peliculaController.uploadImage, peliculaController.createPelicula);
 // Obtener todas las películas
 router.get('/', peliculaController.getPeliculas);
 // Obtener película por ID

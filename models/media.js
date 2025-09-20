@@ -18,6 +18,11 @@ const MediaSchema = Schema({
     fechaActualizacion: {
         type: Date,
         default: new Date()
+    },
+    url: {
+        type: String,
+        required: [true, 'La URL es obligatoria'],
+        unique: true
     }
 })
 

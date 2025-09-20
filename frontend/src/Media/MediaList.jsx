@@ -118,6 +118,8 @@ function MediaList() {
         <thead style={{ background: '#e9ecef' }}>
           <tr>
             <th><i className="bi bi-film" style={{ color: '#ff4b5c' }}></i> Nombre</th>
+            <th><i className="bi bi-person" style={{ color: '#ff4b5c' }}></i> Director</th>
+            <th><i className="bi bi-image" style={{ color: '#ff4b5c' }}></i> Imagen</th>
             <th><i className="bi bi-check-circle" style={{ color: '#ff4b5c' }}></i> Estado</th>
             <th style={{ textAlign: 'center' }}>Acciones</th>
           </tr>
@@ -133,6 +135,16 @@ function MediaList() {
                           type="text"
                           name="nombre"
                           value={editForm.nombre}
+                          onChange={handleEditInputChange}
+                          required
+                          style={{ width: '100%', borderColor: '#ff4b5c' }}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          name="imagen"
+                          value={editForm.imagen}
                           onChange={handleEditInputChange}
                           required
                           style={{ width: '100%', borderColor: '#ff4b5c' }}
@@ -160,6 +172,14 @@ function MediaList() {
                   ) : (
                     <>
                       <td><strong>{m.nombre}</strong></td>
+                      <td>{m.director?.nombre || 'Sin director'}</td>
+                      <td>
+                        {m.imagen ? (
+                          <img src={m.imagen} alt={m.nombre} style={{ maxWidth: '100px', maxHeight: '100px', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ color: '#6c757d' }}>Sin imagen</span>
+                        )}
+                      </td>
                       <td>{m.estado ? <span style={{ color: '#28a745' }}><i className="bi bi-check-circle-fill"></i> Activo</span> : <span style={{ color: '#6c757d' }}><i className="bi bi-x-circle-fill"></i> Inactivo</span>}</td>
                       <td style={{ textAlign: 'center' }}>
                         <button className="btn btn-warning btn-sm me-2" style={{ background: '#ffb347', border: 'none', color: '#fff' }} onClick={() => handleEditClick(m)}>
@@ -173,7 +193,7 @@ function MediaList() {
                   )}
                 </tr>
               ))
-            : <tr><td colSpan="3" style={{ textAlign: 'center' }}>No hay producciones registradas.</td></tr>}
+            : <tr><td colSpan="5" style={{ textAlign: 'center' }}>No hay producciones registradas.</td></tr>}
         </tbody>
       </table>
     </div>

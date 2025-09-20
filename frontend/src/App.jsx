@@ -5,6 +5,7 @@ import DirectorList from './Director/DirectorList';
 import ProductoraList from './Productora/ProductoraList';
 import TipoList from './Tipo/TipoList';
 import MediaList from './Media/MediaList';
+import CrearPelicula from './Pelicula/CrearPelicula';
 import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -37,6 +38,9 @@ function App() {
           <StyledLink to="/media">
             <Button color="inherit">Películas y Series</Button>
           </StyledLink>
+          <StyledLink to="/crear-pelicula">
+            <Button color="inherit">Crear Película</Button>
+          </StyledLink>
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg">
@@ -47,6 +51,7 @@ function App() {
             <Route path="/productoras" element={<ProductoraList />} />
             <Route path="/tipos" element={<TipoList />} />
             <Route path="/media" element={<MediaList />} />
+            <Route path="/crear-pelicula" element={<CrearPelicula />} />
             <Route path="/" element={<MediaList />} />
           </Routes>
         </Box>

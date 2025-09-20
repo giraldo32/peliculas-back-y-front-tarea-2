@@ -23,6 +23,12 @@ function PeliculaList() {
     tipo: '',
     media: ''
   });
+  const [filters, setFilters] = useState({
+    genero: '',
+    productora: '',
+    medio: '',
+    tipo: ''
+  });
 
   useEffect(() => {
     axios.get('http://localhost:3000/peliculas')
@@ -34,10 +40,24 @@ function PeliculaList() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = e => {
+    setForm({ ...form, media: e.target.files[0] });
+  };
+
   const handleCreate = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/peliculas', form);
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const res = await axios.post('http://localhost:3000/peliculas', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       setPeliculas([...peliculas, res.data]);
       setForm({ titulo: '', año: '', director: '', genero: '', productora: '', tipo: '', media: '' });
       Swal.fire('Creado', 'Película creada correctamente', 'success');
@@ -94,6 +114,25 @@ function PeliculaList() {
     }
   };
 
+  const handleFilterChange = e => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const fetchFilteredPeliculas = () => {
+    const query = Object.entries(filters)
+      .filter(([_, value]) => value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    axios.get(`http://localhost:3000/peliculas?${query}`)
+      .then(res => setPeliculas(res.data))
+      .catch(err => setPeliculas([]));
+  };
+
+  useEffect(() => {
+    fetchFilteredPeliculas();
+  }, [filters]);
+
   return (
     <div style={{ maxWidth: '1000px', margin: '2rem auto', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', padding: '2rem' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#0077b6' }}>
@@ -107,10 +146,28 @@ function PeliculaList() {
         <input type="text" name="genero" placeholder="ID Género" value={form.genero} onChange={handleInputChange} required style={{ flex: '1', minWidth: '80px', borderColor: '#0077b6' }} />
         <input type="text" name="productora" placeholder="ID Productora" value={form.productora} onChange={handleInputChange} required style={{ flex: '1', minWidth: '80px', borderColor: '#0077b6' }} />
         <input type="text" name="tipo" placeholder="ID Tipo" value={form.tipo} onChange={handleInputChange} required style={{ flex: '1', minWidth: '80px', borderColor: '#0077b6' }} />
-        <input type="text" name="media" placeholder="ID Media" value={form.media} onChange={handleInputChange} required style={{ flex: '1', minWidth: '80px', borderColor: '#0077b6' }} />
+        <input type="file" name="media" onChange={handleFileChange} required style={{ flex: '1', minWidth: '80px', borderColor: '#0077b6' }} />
         <button type="submit" className="btn btn-success" style={{ minWidth: '100px', background: '#0077b6', border: 'none' }}>
           <i className="bi bi-plus-circle me-1"></i> Crear
         </button>
+      </form>
+      <form style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <select name="genero" value={filters.genero} onChange={handleFilterChange} style={{ flex: '1', minWidth: '120px', borderColor: '#0077b6' }}>
+          <option value="">Todos los géneros</option>
+          {/* Opciones dinámicas */}
+        </select>
+        <select name="productora" value={filters.productora} onChange={handleFilterChange} style={{ flex: '1', minWidth: '120px', borderColor: '#0077b6' }}>
+          <option value="">Todas las productoras</option>
+          {/* Opciones dinámicas */}
+        </select>
+        <select name="medio" value={filters.medio} onChange={handleFilterChange} style={{ flex: '1', minWidth: '120px', borderColor: '#0077b6' }}>
+          <option value="">Todos los medios</option>
+          {/* Opciones dinámicas */}
+        </select>
+        <select name="tipo" value={filters.tipo} onChange={handleFilterChange} style={{ flex: '1', minWidth: '120px', borderColor: '#0077b6' }}>
+          <option value="">Todos los tipos</option>
+          {/* Opciones dinámicas */}
+        </select>
       </form>
       <table className="table table-bordered table-hover" style={{ width: '100%', background: '#f9f9f9' }}>
         <thead style={{ background: '#e9ecef' }}>
