@@ -1,5 +1,5 @@
-// Importa el framework Express
 
+// Importa el framework Express
 const express = require('express')
 const cors = require('cors')
 const swaggerJSDoc = require('swagger-jsdoc')
@@ -9,11 +9,29 @@ const { mongoConn } = require('./databases/configuration')
 mongoConn()
 // Crea una instancia de la aplicación Express
 const app = express()
+// Ruta especial para evitar 404 de Chrome DevTools (debe ir después de crear app)
+app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
+  res.status(204).send(); // 204 No Content
+});
 
 // Middleware para que Express pueda entender y procesar JSON en las peticiones POST
 app.use(express.json())
 app.use(cors({
   origin: '*'
+}))
+
+// Middleware para configurar Content Security Policy (CSP)
+const helmet = require('helmet');
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "http://localhost:3000"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"]
+    }
+  }
 }))
 
 // Configuración de Swagger
@@ -37,9 +55,7 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-// Servir archivos estáticos del build de React
-const path = require('path');
-app.use(express.static(path.join(__dirname, 'frontend', 'build')));
+// No se sirve frontend porque no existe carpeta build
 
 // --- DEFINICIÓN DE ENDPOINTS ---
 
@@ -58,16 +74,15 @@ app.use('/peliculas', peliculas)
 app.use('/productoras', productoras)
 
 
+
+
+// Ruta raíz para mensaje de ok y versión (siempre responde JSON)
+const packageJson = require('./package.json');
 app.get('/', (req, res) => {
-
-  // Si existe el build de React, servir index.html
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+  res.json({ mensaje: 'ok', version: packageJson.version });
 });
 
-// Catch-all para rutas de React
-// Catch-all para rutas de React (excepto API y archivos estáticos)
-app.get(/^((?!api-docs|generos|directores|tipos|uploads|swagger).)*$/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
+
+
 
 module.exports = app;
