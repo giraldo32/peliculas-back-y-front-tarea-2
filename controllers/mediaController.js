@@ -3,9 +3,14 @@ const { request, response } = require('express')
 
 const createMedia = async (req = request, res = response) => {
     try {
-        console.log('Datos recibidos en el backend:', req.body); // ← AGREGAR ESTA LÍNEA
-        const { nombre, url, sinopsis, anioEstreno, estado } = req.body;
-        const datos = { nombre, url, sinopsis, anioEstreno, estado };
+        const { nombre, url, sinopsis, anioEstreno } = req.body;
+        const datos = { 
+            nombre,          // ← CAMBIAR: usar 'nombre' directamente
+            url, 
+            sinopsis, 
+            anioEstreno,
+            estado: true
+        };
         const media = new Media(datos);
         await media.save();
         res.status(201).json(media);
@@ -40,13 +45,19 @@ const getMediasByEstado = async (req = request, res = response) => {
 const updateMedia = async (req = request, res = response) => {
     try {
         const { id } = req.params;
-        const { nombre, url, sinopsis, anioEstreno, estado } = req.body;
-        const datos = { nombre, url, sinopsis, anioEstreno, estado, fechaActualizacion: new Date() };
+        const { nombre, url, sinopsis, anioEstreno } = req.body;
+        const datos = { 
+            nombre,          // ← CAMBIAR: usar 'nombre' directamente
+            url, 
+            sinopsis, 
+            anioEstreno,
+            fechaActualizacion: new Date() 
+        };
         const mediaActualizada = await Media.findByIdAndUpdate(id, datos, { new: true });
         if (!mediaActualizada) {
             return res.status(404).json({ msj: 'Media no encontrada' });
         }
-        return res.json(mediaActualizadas);
+        return res.json(mediaActualizada);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ msj: 'Error en el servidor' });

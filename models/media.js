@@ -1,10 +1,9 @@
 const { Schema, model } = require('mongoose');
 
 const MediaSchema = Schema({
-    titulo: {
+    nombre: {                    // ← CAMBIAR de 'titulo' a 'nombre'
         type: String,
-        required: [true, 'El título es obligatorio'],
-        unique: true
+        required: [true, 'El nombre es obligatorio']
     },
     sinopsis: {
         type: String,
@@ -12,8 +11,7 @@ const MediaSchema = Schema({
     },
     url: {
         type: String,
-        required: [true, 'La URL es obligatoria'],
-        unique: true
+        required: [true, 'La URL es obligatoria']
     },
     anioEstreno: {
         type: Number,
@@ -31,11 +29,6 @@ const MediaSchema = Schema({
     fechaActualizacion: {
         type: Date,
         default: new Date()
-    },
-    url: {
-        type: String,
-        required: [true, 'La URL es obligatoria'],
-        unique: true
     }
 });
 
