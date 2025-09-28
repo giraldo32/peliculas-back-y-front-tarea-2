@@ -23,6 +23,14 @@ const MediaSchema = Schema({
         type: String,
         required: [true, 'La URL es obligatoria'],
         unique: true
+    },
+    sinopsis: {
+        type: String,
+        required: [true, 'La sinopsis es obligatoria']
+    },
+    anioEstreno: {
+        type: Number,
+        required: [true, 'El año de estreno es obligatorio']
     }
 })
 
